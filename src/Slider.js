@@ -11,9 +11,15 @@ export default function TimeSlider({setTimeApp, dateFromApp, timeFromApp, maxfro
         setTimeApp(time)
     };
 
-    const formatDateFromApp = (d) => {
-        return d.getDate()  + "-" + (d.getMonth()+1) + "-" + d.getFullYear() + " " +
-            d.getHours() + ":" + d.getMinutes()
+    const formatDateFromApp = (date) => {
+        const year = date.getFullYear();
+        const month = (date.getMonth() + 1).toString().padStart(2, '0'); // Months are 0-indexed
+        const day = date.getDate().toString().padStart(2, '0');
+        const hour = date.getHours().toString().padStart(2, '0');
+        const minute = date.getMinutes().toString().padStart(2, '0');
+        const second = date.getSeconds().toString().padStart(2, '0');
+
+        return `${day}/${month}/${year} ${hour}:${minute}:${second}`
     }
 
     return (

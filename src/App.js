@@ -9,6 +9,7 @@ import TimeSlider from "./Slider";
 
 const MAP_STYLE = 'https://basemaps.cartocdn.com/gl/dark-matter-nolabels-gl-style/style.json';
 
+
 const INITIAL_VIEW_STATE = {
     longitude: 4.383406,
     latitude: 50.815338,
@@ -161,9 +162,7 @@ export default function App({
         const seconds = '00'; // Seconds are not in the input, assumed to be '00'
 
         // Combine parts into the desired format with the timezone offset +01
-        const formatted = `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
-
-        return formatted;
+        return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`
     }
 
 
