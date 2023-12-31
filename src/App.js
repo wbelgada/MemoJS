@@ -4,6 +4,7 @@ import DeckGL from '@deck.gl/react';
 import {MVTLayer, TripsLayer} from '@deck.gl/geo-layers';
 import {StaticMap} from "react-map-gl";
 import {BrowserRouter as Router} from "react-router-dom";
+import TimeSlider from "./Slider";
 
 
 const MAP_STYLE = 'https://basemaps.cartocdn.com/gl/dark-matter-nolabels-gl-style/style.json';
@@ -22,7 +23,7 @@ const INITIAL_VIEW_STATE = {
 
 export default function App({
                                 trailLength = 180,
-                                animationSpeed = 10,
+                                animationSpeed = 2,
                                 DATA_TRIPS_URL =
                                     'http://localhost:7800/public.historical_trip/{z}/{x}/{y}.pbf?p_tripid=',
                                 DATA_LINES_URL =
@@ -34,13 +35,13 @@ export default function App({
     const [animation] = useState({});
     const [isAnimated,setIsAnimated] = useState(false)
     const [dataTrips,setDataTrips] = useState(DATA_TRIPS_URL);
-    const [tripParameter, setTripParameter] = useState('');
+    const [tripParameter, setTripParameter] = useState('95_1');
     const [dataLines,setDataLines] = useState(DATA_LINES_URL);
     const [lineParameter, setLineParameter] = useState('');
     const [minTimestamp, setMinTimestamp] = useState(0);
     const [maxTimestamp, setMaxTimestamp] = useState(0);
-    const [minTimeURL, setMinTimeURL] = useState('');
-    const [maxTimeURL, setMaxTimeURL] = useState('');
+    const [minTimeURL, setMinTimeURL] = useState('2023-12-30T16:00');
+    const [maxTimeURL, setMaxTimeURL] = useState('2023-12-30T20:00');
     const [loopLength,setLoopLength] = useState(1)
 
     const animate = () => {
@@ -101,7 +102,8 @@ export default function App({
         currentTime: time, // it has to be here, not inside the TripsLayer
         // loadOptions: {mode: 'no-cors'},
         renderSubLayers: props => {
-            console.log(props.data);
+            // TODO: uncomment next line
+            //console.log(props.data);
             // return new GeoJsonLayer(props);
             return new TripsLayer(props, {
                 data: props.data,
@@ -127,7 +129,8 @@ export default function App({
         currentTime: time, // it has to be here, not inside the TripsLayer
         // loadOptions: {mode: 'no-cors'},
         renderSubLayers: props => {
-            console.log(props.data);
+            // TODO: uncomment next line
+            // console.log(props.data);
             // return new GeoJsonLayer(props);
             return new TripsLayer(props, {
                 data: props.data,
@@ -201,6 +204,10 @@ export default function App({
         console.log('Loop Length : ',loopLength);
     };
 
+    const setTimeFromSlider = (newTime) => {
+        setTime(newTime)
+    }
+
     return (
         <div style={{ position: 'relative', height: '100vh' }}>
             <DeckGL
@@ -211,6 +218,16 @@ export default function App({
                 <StaticMap mapStyle={MAP_STYLE} />
             </DeckGL>
             <div style={{ position: 'absolute', top: 0, left: 0, padding: '10px' }}>
+                <div>
+                    <button onClick={() => {
+                        console.log(`New Time : ${time}`)
+                    }}>Print Time</button>
+                    <TimeSlider
+                        setTimeApp={setTimeFromSlider}
+                        timeFromApp={time}
+                        maxfromApp={loopLength}
+                    />
+                </div>
                 <div>
                     <input type="text" value={tripParameter} onChange={handleTripInputChange} />
                     <button onClick={updateTripParameter}>Update TripID</button>
