@@ -219,13 +219,11 @@ export default function App({
             </DeckGL>
             <div style={{ position: 'absolute', top: 0, left: 0, padding: '10px' }}>
                 <div>
-                    <button onClick={() => {
-                        console.log(`New Time : ${time}`)
-                    }}>Print Time</button>
                     <TimeSlider
                         setTimeApp={setTimeFromSlider}
                         timeFromApp={time}
                         maxfromApp={loopLength}
+                        dateFromApp={new Date((minTimestamp+time)*1000)}
                     />
                 </div>
                 <div>
