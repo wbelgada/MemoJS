@@ -24,7 +24,7 @@ const INITIAL_VIEW_STATE = {
 
 export default function App({
                                 trailLength = 180,
-                                animationSpeed = 2,
+                                animationSpeed = 5,
                                 DATA_TRIPS_URL =
                                     'http://localhost:7800/public.historical_trip/{z}/{x}/{y}.pbf?p_tripid=',
                                 DATA_LINES_URL =
@@ -192,6 +192,10 @@ export default function App({
                 const start = convertDateTime(minTimeURL);
                 const end = convertDateTime(maxTimeURL);
                 setDataTrips(DATA_TRIPS_URL + tripParameter+ '&p_start=' + start + '&p_end=' + end);
+            }else if (lineParameter !== '') {
+                const start = convertDateTime(minTimeURL);
+                const end = convertDateTime(maxTimeURL);
+                setDataTrips(DATA_LINES_URL + lineParameter+ '&p_start=' + start + '&p_end=' + end);
             }
             console.log(dataTrips);
             setMinTimestamp(new Date(minTimeURL).getTime()/1000);
