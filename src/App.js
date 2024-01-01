@@ -36,13 +36,13 @@ export default function App({
     const [animation] = useState({});
     const [isAnimated,setIsAnimated] = useState(false)
     const [dataTrips,setDataTrips] = useState(DATA_TRIPS_URL);
-    const [tripParameter, setTripParameter] = useState('95_1');
+    const [tripParameter, setTripParameter] = useState('');
     const [dataLines,setDataLines] = useState(DATA_LINES_URL);
     const [lineParameter, setLineParameter] = useState('');
     const [minTimestamp, setMinTimestamp] = useState(0);
     const [maxTimestamp, setMaxTimestamp] = useState(0);
-    const [minTimeURL, setMinTimeURL] = useState('2023-12-30T16:00');
-    const [maxTimeURL, setMaxTimeURL] = useState('2023-12-30T20:00');
+    const [minTimeURL, setMinTimeURL] = useState('');
+    const [maxTimeURL, setMaxTimeURL] = useState('');
     const [loopLength,setLoopLength] = useState(1)
 
     const animate = () => {
