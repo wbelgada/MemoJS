@@ -4,9 +4,11 @@ import DeckGL from '@deck.gl/react';
 import {MVTLayer, TripsLayer} from '@deck.gl/geo-layers';
 import {StaticMap} from "react-map-gl";
 import {BrowserRouter as Router} from "react-router-dom";
+import TimeSlider from "./Slider";
 
 
 const MAP_STYLE = 'https://basemaps.cartocdn.com/gl/dark-matter-nolabels-gl-style/style.json';
+
 
 const INITIAL_VIEW_STATE = {
     longitude: 4.383406,
@@ -22,7 +24,7 @@ const INITIAL_VIEW_STATE = {
 
 export default function App({
                                 trailLength = 180,
-                                animationSpeed = 10,
+                                animationSpeed = 5,
                                 DATA_TRIPS_URL =
                                     'http://localhost:7800/public.historical_trip/{z}/{x}/{y}.pbf?p_tripid=',
                                 DATA_LINES_URL =
@@ -101,8 +103,6 @@ export default function App({
         currentTime: time, // it has to be here, not inside the TripsLayer
         // loadOptions: {mode: 'no-cors'},
         renderSubLayers: props => {
-            console.log(props.data);
-            // return new GeoJsonLayer(props);
             return new TripsLayer(props, {
                 data: props.data,
                 getPath: d => d.geometry.coordinates,
@@ -127,7 +127,8 @@ export default function App({
         currentTime: time, // it has to be here, not inside the TripsLayer
         // loadOptions: {mode: 'no-cors'},
         renderSubLayers: props => {
-            console.log(props.data);
+            // TODO: uncomment next line
+            // console.log(props.data);
             // return new GeoJsonLayer(props);
             return new TripsLayer(props, {
                 data: props.data,
@@ -158,9 +159,7 @@ export default function App({
         const seconds = '00'; // Seconds are not in the input, assumed to be '00'
 
         // Combine parts into the desired format with the timezone offset +01
-        const formatted = `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
-
-        return formatted;
+        return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`
     }
 
 
@@ -190,6 +189,10 @@ export default function App({
                 const start = convertDateTime(minTimeURL);
                 const end = convertDateTime(maxTimeURL);
                 setDataTrips(DATA_TRIPS_URL + tripParameter+ '&p_start=' + start + '&p_end=' + end);
+            }else if (lineParameter !== '') {
+                const start = convertDateTime(minTimeURL);
+                const end = convertDateTime(maxTimeURL);
+                setDataTrips(DATA_LINES_URL + lineParameter+ '&p_start=' + start + '&p_end=' + end);
             }
             console.log(dataTrips);
             setMinTimestamp(new Date(minTimeURL).getTime()/1000);
@@ -201,6 +204,10 @@ export default function App({
         console.log('Loop Length : ',loopLength);
     };
 
+    const setTimeFromSlider = (newTime) => {
+        setTime(newTime)
+    }
+
     return (
         <div style={{ position: 'relative', height: '100vh' }}>
             <DeckGL
@@ -211,6 +218,14 @@ export default function App({
                 <StaticMap mapStyle={MAP_STYLE} />
             </DeckGL>
             <div style={{ position: 'absolute', top: 0, left: 0, padding: '10px' }}>
+                <div>
+                    <TimeSlider
+                        setTimeApp={setTimeFromSlider}
+                        timeFromApp={time}
+                        maxfromApp={loopLength}
+                        dateFromApp={new Date((minTimestamp+time)*1000)}
+                    />
+                </div>
                 <div>
                     <input type="text" value={tripParameter} onChange={handleTripInputChange} />
                     <button onClick={updateTripParameter}>Update TripID</button>
