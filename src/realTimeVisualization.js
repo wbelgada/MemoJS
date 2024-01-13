@@ -4,7 +4,7 @@ import {MVTLayer} from '@deck.gl/geo-layers';
 import {StaticMap} from "react-map-gl";
 
 const TRIP_URL = 'http://localhost:7800/public.trip_last_instant/{z}/{x}/{y}.pbf';
-const LINE_URL = 'http://localhost:7800/public.line_last_instants/{z}/{x}/{y}.pbf';
+const LINE_URL = 'http://localhost:7800/public.line_last_instant/{z}/{x}/{y}.pbf';
 const TRAJECTORY_URL = 'http://localhost:7800/public.default_trajectory/{z}/{x}/{y}.pbf';
 const MAP_STYLE = 'https://basemaps.cartocdn.com/gl/dark-matter-nolabels-gl-style/style.json';
 
@@ -24,17 +24,21 @@ function App() {
     const [tripURL, setTripURL] = useState('');
     const [lineURL, setLineURL] = useState('');
     const [trajectoryURL, setTrajectoryURL] = useState('');
-    const [tripLayerVisibility, setTripLayerVisibility] = useState(true);
-    const [lineLayerVisibility, setLineLayerVisibility] = useState(true);
-    const [trajectoryLayerVisibility, setTrajectoryLayerVisibility] = useState(true);
+    const [tripLayerVisibility, setTripLayerVisibility] = useState(false);
+    const [lineLayerVisibility, setLineLayerVisibility] = useState(false);
+    const [trajectoryLayerVisibility, setTrajectoryLayerVisibility] = useState(false);
 
+    const onTileLoad = (tile) => {
+        console.log(tile.content);
+    }
 
     const layers = [
         new MVTLayer({
             id: 'tripLayer',
             data: tripURL,
+            onTileLoad : onTileLoad ,
             minZoom: 0,
-            maxZoom: 18,
+            maxZoom: 22,
             getPointRadius: 7,
             getFillColor: [255, 0, 0],
             visible: tripLayerVisibility,
@@ -43,7 +47,7 @@ function App() {
             id: 'lineLayer',
             data: lineURL,
             minZoom: 0,
-            maxZoom: 18,
+            maxZoom: 22,
             getPointRadius: 7,
             getFillColor: [0, 0, 255],
             visible: lineLayerVisibility
@@ -75,12 +79,32 @@ function App() {
     const toggleTripLayerVisibility = () => setTripLayerVisibility(!tripLayerVisibility);
     const toggleLineLayerVisibility = () => setLineLayerVisibility(!lineLayerVisibility);
     const toggleTrajectoryLayerVisibility = () => setTrajectoryLayerVisibility(!trajectoryLayerVisibility);
-    const updateTripParameter = () => setTripURL(TRIP_URL + `?p_tripid=` + tripParameter);
-    const updateLineParameter = () => setLineURL(LINE_URL + `?p_lineid=` + lineParameter);
+    const updateTripParameter = () => {
+        console.log(tripParameter);
+        setTripURL(TRIP_URL + `?p_tripid=` + tripParameter + `&timestamp=${new Date().getTime()}`);
+    }
+    const updateLineParameter = () => {
+        console.log(lineParameter);
+        setLineURL(LINE_URL + `?p_lineid=` + lineParameter + `&timestamp=${new Date().getTime()}`);
+    }
     const updateTrajectoryParameter = () => setTrajectoryURL(TRAJECTORY_URL + `?p_lineid=` + trajectoryParameter);
 
 
+    useEffect(() => {
+        const interval = setInterval(() => {
+            console.log(tripParameter,lineParameter)
+            console.log(tripURL,lineURL)
+            if (tripLayerVisibility) {
+                // Modify the URL to trigger a refresh
+                setTripURL(TRIP_URL + `?p_tripid=` + tripParameter + `&timestamp=${new Date().getTime()}`);
+            }
+            if (lineLayerVisibility){
+                setLineURL(LINE_URL + `?p_lineid=` + lineParameter + `&timestamp=${new Date().getTime()}`);
+            }
+        }, 5000);
 
+        return () => clearInterval(interval);
+    });
 
     return (
         <div style={{ position: 'relative', height: '100vh' }}>
@@ -110,7 +134,7 @@ function App() {
                     <input type="text" value={trajectoryParameter} onChange={handleTrajectoryInputChange} />
                     <button onClick={updateTrajectoryParameter}>Update LineID</button>
                     <button onClick={toggleTrajectoryLayerVisibility}>
-                        {trajectoryLayerVisibility ? 'Hide trajectory Layer' : 'Show trajecotry Layer'}
+                        {trajectoryLayerVisibility ? 'Hide trajectory Layer' : 'Show trajectory Layer'}
                     </button>
                 </div>
             </div>
