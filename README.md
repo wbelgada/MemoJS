@@ -14,7 +14,6 @@ function needed in order to make the script working.
 The script allowing to do the historical visualization can be found in the in the historicalVisualization.js file.
 Here is an example of the visualization of historical data.
 
-![Multiple vehicle visualization](https://drive.google.com/file/d/1Y9BabQNTsRt2VPHDtSJipQOTD8KXSN3g/view?usp=drive_link)
 
 
 
